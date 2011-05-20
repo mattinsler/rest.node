@@ -1,0 +1,17 @@
+{
+  "name": "abstract-api",
+  "description": "Base class to quickly create API clients",
+  "version": "0.1.0",
+  "author": "Matt Insler <matt.insler@gmail.com>",
+  "dependencies": {
+    "request": ">= 1.9.5",
+    "underscore": "1.1.6"
+  },
+  "keywords": ["api", "web", "rest", "client"],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mattinsler/abstract-api.git"
+  },
+  "main": "index",
+  "engines": { "node": ">= 0.4.7" }
+}
