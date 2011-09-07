@@ -1,16 +1,18 @@
 {
   "author": "Matt Insler <matt.insler@gmail.com> (www.mattinsler.com)",
-  "name": "abstract-api",
-  "description": "Base class to quickly create API clients",
+  "name": "rest.node",
+  "description": "Base class to quickly create REST clients",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mattinsler/abstract-api.git"
+    "url": "git://github.com/mattinsler/rest.node.git"
   },
   "main": "index",
   "engines": {
     "node": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "underscore": "1.1.x"
+  },
   "devDependencies": {}
 }
