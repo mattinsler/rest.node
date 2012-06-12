@@ -4,6 +4,7 @@ var util = require('util'),
     _ = require('underscore');
 
 function Rest(base_url) {
+  this.base_url = base_url;
   this.parsed_url = Url.parse(base_url, true);
 }
 
@@ -24,6 +25,7 @@ Rest.prototype._executeRequest = function(options, callback) {
   function createRequestOptions(options) {
     var query = querystring.stringify(options.query);
     return {
+      agent: false,
       host: options.host,
       port: options.port,
       method: options.method,
@@ -34,10 +36,19 @@ Rest.prototype._executeRequest = function(options, callback) {
   
   var body = '';
   var requestOptions = createRequestOptions(options);
+  if (options.body) {
+    if (typeof(options.body) !== 'string') {
+      options.body = querystring.stringify(options.body);
+    }
+    options.headers['Content-Length'] = options.body.length;
+    options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  }
+  
   if (this.debug) {
     console.log(requestOptions);
+    console.log(options);
   }
-  var req = require(options.protocol.split(':')[0]).request(createRequestOptions(options), function(res) {
+  var req = require(options.protocol.split(':')[0]).request(requestOptions, function(res) {
     res.setEncoding('utf8');
     res.on('data', function(chunk) {
       body += chunk;
@@ -51,7 +62,7 @@ Rest.prototype._executeRequest = function(options, callback) {
   if (options.body) {
     req.write(options.body);
   }
-  
+
   req.end();
 };
 
