@@ -77,7 +77,7 @@ Rest.prototype._handleResponse = function(err, res, body, callback) {
   if (err) {
     callback(err);
   } else if (res.statusCode !== 200) {
-    callback(new Error('Status: ' + res.statusCode + '\nBody: ' + util.inspect(parsedBody)));
+    callback(new Error('Status[' + res.statusCode + ']\nBody[' + JSON.stringify(parsedBody) + ']'));
   } else {
     callback(null, parsedBody);
   }
