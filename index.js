@@ -126,7 +126,7 @@ Rest.prototype._handleResponse = function(err, res, body, callback) {
   if (err) {
     callback(err);
   } else if (res.statusCode !== 200) {
-    callback(new Rest.Error(res.statusCode, parsedBody));
+    callback(new Rest.RestError(res.statusCode, parsedBody));
   } else {
     callback(null, parsedBody);
   }
