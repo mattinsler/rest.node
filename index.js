@@ -8,6 +8,55 @@ function Rest(base_url) {
   this.parsed_url = Url.parse(base_url, true);
 }
 
+CODES = {
+  300: 'Multiple Choices',
+  301: 'Moved Permanently',
+  302: 'Found',
+  303: 'See Other',
+  304: 'Not Modified',
+  305: 'Use Proxy',
+  // 306: '',
+  307: 'Temporary Redirect',
+  
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  402: 'Payment Required',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  406: 'Not Acceptable',
+  407: 'Proxy Authentication Required',
+  408: 'Request Timeout',
+  409: 'Conflict',
+  410: 'Gone',
+  411: 'Length Required',
+  412: 'Precondition Failed',
+  413: 'Request Entity Too Large',
+  414: 'Request-URI Too Long',
+  415: 'Unsupported Media Type',
+  416: 'Requested Range Not Satisfiable',
+  417: 'Expectation Failed',
+
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Timeout',
+  505: 'HTTP Version Not Supported'
+};
+
+Rest.RestError = function(status_code, body) {
+  Error.call(this);
+  Error.captureStackTrace(this, arguments.callee);
+  this.status_code = status_code;
+  this.status_type = CODES[status_code] || 'Unknown';
+  this.message = status_code + ': ' + this.status_type;
+  this.body = body;
+  this.name = 'RestError';
+};
+
+Rest.RestError.prototype.__proto__ = Error.prototype;
+
 Rest.prototype.debug = false;
 
 // override-able
@@ -77,7 +126,7 @@ Rest.prototype._handleResponse = function(err, res, body, callback) {
   if (err) {
     callback(err);
   } else if (res.statusCode !== 200) {
-    callback(new Error('Status[' + res.statusCode + ']\nBody[' + JSON.stringify(parsedBody) + ']'));
+    callback(new Rest.Error(res.statusCode, parsedBody));
   } else {
     callback(null, parsedBody);
   }
