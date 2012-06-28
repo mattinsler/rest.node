@@ -55,7 +55,7 @@ Rest.RestError = function(status_code, body) {
   this.name = 'RestError';
 };
 
-Rest.RestError.prototype.__proto__ = Error.prototype;
+util.inherits(Rest.RestError, Error);
 
 Rest.prototype.debug = false;
 
