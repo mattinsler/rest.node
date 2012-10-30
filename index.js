@@ -1,6 +1,5 @@
 var util = require('util'),
     Url = require('url'),
-    querystring = require('querystring'),
     _ = require('underscore');
 
 function Rest(base_url) {
@@ -60,6 +59,11 @@ util.inherits(Rest.RestError, Error);
 Rest.prototype.debug = false;
 
 // override-able
+Rest.prototype.createQuerystring = function(opts) {
+  require('querystring').stringify(options.query);
+};
+
+// override-able
 Rest.prototype.setRequestOptions = function(options, method, params) {
   options.path += method;
   _.extend(options.query, params);
@@ -71,8 +75,9 @@ Rest.prototype.parseResponseBody = function(headers, body) {
 };
 
 Rest.prototype._executeRequest = function(options, callback) {
+  var _this = this;
   function createRequestOptions(options) {
-    var query = querystring.stringify(options.query);
+    var query = _this.createQuerystring(options.query);
     return {
       agent: false,
       host: options.host,
