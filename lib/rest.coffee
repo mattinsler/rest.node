@@ -27,6 +27,7 @@ class Rest
     @_rest_options.base_url + '/' + path.replace(/^\/+/, '')
   
   parse_response_body: (headers, body) ->
+    return body unless typeof body is 'string'
     JSON.parse(body)
   
   handle_response: (err, res, body, callback) ->

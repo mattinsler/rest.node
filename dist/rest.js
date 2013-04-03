@@ -55,6 +55,9 @@
     };
 
     Rest.prototype.parse_response_body = function(headers, body) {
+      if (typeof body !== 'string') {
+        return body;
+      }
       return JSON.parse(body);
     };
 
