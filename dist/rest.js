@@ -101,7 +101,7 @@
     };
 
     Rest.prototype.request = function(method, path, opts, callback, request_opts_overrides) {
-      var request_opts,
+      var hooks, req, request_opts,
         _this = this;
       if (typeof opts === 'function') {
         request_opts_overrides = callback;
@@ -109,9 +109,14 @@
         opts = null;
       }
       request_opts = this.create_request_opts(method, path, opts, request_opts_overrides);
-      return request[method](request_opts, function(err, res, body) {
+      req = request[method](request_opts, function(err, res, body) {
         return _this.handle_response(err, res, body, callback);
       });
+      hooks = (this._rest_hooks['post:' + method] || []).concat(this._rest_hooks['post:request'] || []);
+      hooks.forEach(function(hook) {
+        return hook(request_opts, opts, req);
+      });
+      return req;
     };
 
     Rest.prototype.head = function(path, opts, callback) {

@@ -63,8 +63,13 @@ class Rest
     
     request_opts = @create_request_opts(method, path, opts, request_opts_overrides)
     
-    request[method] request_opts, (err, res, body) =>
+    req = request[method] request_opts, (err, res, body) =>
       @handle_response(err, res, body, callback)
+    
+    hooks = (@_rest_hooks['post:' + method] or []).concat(@_rest_hooks['post:request'] or [])
+    hooks.forEach (hook) -> hook(request_opts, opts, req)
+    
+    req
   
   head: (path, opts, callback) ->
     @request('head', path, opts, callback)
