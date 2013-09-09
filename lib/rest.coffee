@@ -1,3 +1,4 @@
+q = require 'q'
 http = require 'http'
 request = require 'request'
 
@@ -61,15 +62,23 @@ class Rest
       callback = opts
       opts = null
     
-    request_opts = @create_request_opts(method, path, opts, request_opts_overrides)
+    d = q.defer()
+    d.promise.nodeify(callback)
     
-    req = request[method] request_opts, (err, res, body) =>
-      @handle_response(err, res, body, callback)
+    try
+      request_opts = @create_request_opts(method, path, opts, request_opts_overrides)
     
-    hooks = (@_rest_hooks['post:' + method] or []).concat(@_rest_hooks['post:request'] or [])
-    hooks.forEach (hook) -> hook(request_opts, opts, req)
+      req = request[method] request_opts, (err, res, body) =>
+        @handle_response err, res, body, (err, data) ->
+          return d.reject(err) if err?
+          d.resolve(data)
     
-    req
+      hooks = (@_rest_hooks['post:' + method] or []).concat(@_rest_hooks['post:request'] or [])
+      hooks.forEach (hook) -> hook(request_opts, opts, req)
+    catch err
+      d.reject(err)
+    
+    d.promise
   
   head: (path, opts, callback) ->
     @request('head', path, opts, callback)

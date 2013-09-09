@@ -1,7 +1,9 @@
 (function() {
-  var Rest, RestError, http, request,
+  var Rest, RestError, http, q, request,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  q = require('q');
 
   http = require('http');
 
@@ -101,22 +103,33 @@
     };
 
     Rest.prototype.request = function(method, path, opts, callback, request_opts_overrides) {
-      var hooks, req, request_opts,
+      var d, hooks, req, request_opts,
         _this = this;
       if (typeof opts === 'function') {
         request_opts_overrides = callback;
         callback = opts;
         opts = null;
       }
-      request_opts = this.create_request_opts(method, path, opts, request_opts_overrides);
-      req = request[method](request_opts, function(err, res, body) {
-        return _this.handle_response(err, res, body, callback);
-      });
-      hooks = (this._rest_hooks['post:' + method] || []).concat(this._rest_hooks['post:request'] || []);
-      hooks.forEach(function(hook) {
-        return hook(request_opts, opts, req);
-      });
-      return req;
+      d = q.defer();
+      d.promise.nodeify(callback);
+      try {
+        request_opts = this.create_request_opts(method, path, opts, request_opts_overrides);
+        req = request[method](request_opts, function(err, res, body) {
+          return _this.handle_response(err, res, body, function(err, data) {
+            if (err != null) {
+              return d.reject(err);
+            }
+            return d.resolve(data);
+          });
+        });
+        hooks = (this._rest_hooks['post:' + method] || []).concat(this._rest_hooks['post:request'] || []);
+        hooks.forEach(function(hook) {
+          return hook(request_opts, opts, req);
+        });
+      } catch (err) {
+        d.reject(err);
+      }
+      return d.promise;
     };
 
     Rest.prototype.head = function(path, opts, callback) {

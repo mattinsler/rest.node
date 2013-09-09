@@ -1,7 +1,7 @@
 {
   "name": "rest.node",
   "description": "Base class to quickly create REST clients",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "homepage": "https://github.com/mattinsler/rest.node",
   "author": {
     "name": "Matt Insler",
@@ -26,7 +26,8 @@
     "node": ">= 0.6.0"
   },
   "dependencies": {
-    "request": "2.x.x"
+    "request": "2.x.x",
+    "q": "0.9.7"
   },
   "devDependencies": {
     "grunt": "~0.3.15",
