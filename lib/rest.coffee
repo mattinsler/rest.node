@@ -92,6 +92,9 @@ class Rest
   put: (path, opts, callback) ->
     @request('put', path, opts, callback)
   
+  patch: (path, opts, callback) ->
+    @request('patch', path, opts, callback)
+  
   delete: (path, opts, callback) ->
     @request('del', path, opts, callback)
 

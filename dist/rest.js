@@ -148,6 +148,10 @@
       return this.request('put', path, opts, callback);
     };
 
+    Rest.prototype.patch = function(path, opts, callback) {
+      return this.request('patch', path, opts, callback);
+    };
+
     Rest.prototype["delete"] = function(path, opts, callback) {
       return this.request('del', path, opts, callback);
     };
